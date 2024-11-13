@@ -16,6 +16,7 @@ public class Book {
         this.gen = gen;
     }
 
+    // Metoda pentru a adăuga o carte în baza de date
     public boolean addBookToDatabase() {
         final String DB_URL = "jdbc:mysql://localhost/librarie";
         final String USERNAME = "root";
@@ -37,5 +38,24 @@ public class Book {
         }
     }
 
-    // Getter și Setter dacă sunt necesari
+    // Metoda pentru a șterge o carte din baza de date după titlu
+    public boolean deleteBookFromDatabase(String titlu) {
+        final String DB_URL = "jdbc:mysql://localhost/librarie";
+        final String USERNAME = "root";
+        final String PASSWORD = "";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            String sql = "DELETE FROM carti WHERE titlu = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, titlu);
+
+            int deletedRows = preparedStatement.executeUpdate();
+            return deletedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Getteri și Setteri pentru titlu, autor, an, și gen, dacă sunt necesari
 }

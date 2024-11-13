@@ -22,10 +22,12 @@ public class LibraryApp extends JFrame {
         JButton addClientButton = new JButton("Adaugă Client");
         JButton viewClientsButton = new JButton("Vizualizează Clienți");
         JButton addBookButton = new JButton("Adaugă Carte");
+        JButton deleteBookButton = new JButton("Șterge Carte");
 
         mainPanel.add(addClientButton);
         mainPanel.add(viewClientsButton);
         mainPanel.add(addBookButton);
+        mainPanel.add(deleteBookButton);
 
         // Acțiune pentru butonul "Adaugă Client"
         addClientButton.addActionListener(e -> showAddClientDialog());
@@ -35,6 +37,9 @@ public class LibraryApp extends JFrame {
 
         // Acțiune pentru butonul "Adaugă Carte"
         addBookButton.addActionListener(e -> showAddBookDialog());
+
+        // Acțiune pentru butonul "Șterge Carte"
+        deleteBookButton.addActionListener(e -> showDeleteBookDialog());
 
         setVisible(true);
     }
@@ -170,7 +175,40 @@ public class LibraryApp extends JFrame {
         dialog.setVisible(true);
     }
 
+    // Metoda pentru a deschide un dialog de ștergere a unei cărți
+    private void showDeleteBookDialog() {
+        JDialog dialog = new JDialog(this, "Șterge Carte", true);
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        dialog.add(panel);
+
+        JTextField titleField = new JTextField(15);
+        panel.add(new JLabel("Titlu:"));
+        panel.add(titleField);
+
+        JButton deleteButton = new JButton("Șterge");
+        panel.add(deleteButton);
+
+        deleteButton.addActionListener(e -> {
+            String title = titleField.getText();
+
+            Book book = new Book(title, "", 0, "");
+            if (book.deleteBookFromDatabase(title)) {
+                JOptionPane.showMessageDialog(dialog, "Carte ștearsă cu succes!");
+                dialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Eroare la ștergerea cărții.", "Eroare", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        dialog.setVisible(true);
+    }
+
     public static void main(String[] args) {
         new LibraryApp();
     }
 }
+
