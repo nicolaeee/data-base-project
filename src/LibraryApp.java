@@ -23,11 +23,14 @@ public class LibraryApp extends JFrame {
         JButton viewClientsButton = new JButton("Vizualizează Clienți");
         JButton addBookButton = new JButton("Adaugă Carte");
         JButton deleteBookButton = new JButton("Șterge Carte");
+        JButton filterBooksButton = new JButton("Filtrează Cărți după Autor");
+
 
         mainPanel.add(addClientButton);
         mainPanel.add(viewClientsButton);
         mainPanel.add(addBookButton);
         mainPanel.add(deleteBookButton);
+        mainPanel.add(filterBooksButton);
 
         // Acțiune pentru butonul "Adaugă Client"
         addClientButton.addActionListener(e -> showAddClientDialog());
@@ -41,7 +44,62 @@ public class LibraryApp extends JFrame {
         // Acțiune pentru butonul "Șterge Carte"
         deleteBookButton.addActionListener(e -> showDeleteBookDialog());
 
+        filterBooksButton.addActionListener(e -> showFilterBooksDialog());
+
+
         setVisible(true);
+    }
+
+    // Metoda pentru a deschide dialogul de filtrare a cărților
+    private void showFilterBooksDialog() {
+        JDialog dialog = new JDialog(this, "Filtrează Cărți după Autor", true);
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        dialog.add(panel);
+
+        JTextField authorField = new JTextField(15);
+        panel.add(new JLabel("Autor:"));
+        panel.add(authorField);
+
+        JButton filterButton = new JButton("Filtrează");
+        panel.add(filterButton);
+
+        filterButton.addActionListener(e -> {
+            String author = authorField.getText();
+            displayBooksByAuthor(author);
+            dialog.dispose();
+        });
+
+        dialog.setVisible(true);
+    }
+
+    // Metoda pentru a vizualiza cărțile filtrate după autor
+    private void displayBooksByAuthor(String author) {
+        StringBuilder booksList = new StringBuilder("Cărți de autorul " + author + ":\n");
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            String sql = "SELECT * FROM carti WHERE autor = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, author);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String title = resultSet.getString("titlu");
+                int year = resultSet.getInt("an");
+                String genre = resultSet.getString("gen");
+
+                booksList.append("Titlu: ").append(title)
+                        .append(", An: ").append(year)
+                        .append(", Gen: ").append(genre).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, booksList.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showAddClientDialog() {
