@@ -1,14 +1,14 @@
+package AdminLogic;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class LibraryApp extends JFrame {
+public class AdminInterface extends JFrame {
     private final String DB_URL = "jdbc:mysql://localhost/librarie";
     private final String USERNAME = "root";
     private final String PASSWORD = "";
 
-    public LibraryApp() {
+    public AdminInterface() {
         setTitle("Library Management System");
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,12 +76,13 @@ public class LibraryApp extends JFrame {
         dialog.setVisible(true);
     }
 
-    // Metoda pentru a vizualiza cărțile filtrate după autor
+    // Metoda pentru a vizualiza cărțile filtrate după autor și ordonate
     private void displayBooksByAuthor(String author) {
         StringBuilder booksList = new StringBuilder("Cărți de autorul " + author + ":\n");
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM carti WHERE autor = ?";
+            // Modificarea interogării pentru a adăuga ordonarea după an (descrescător) și gen (crescător)
+            String sql = "SELECT * FROM carti WHERE autor = ? ORDER BY an DESC, gen ASC";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, author);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -101,6 +102,7 @@ public class LibraryApp extends JFrame {
             e.printStackTrace();
         }
     }
+
 
     private void showAddClientDialog() {
         JDialog dialog = new JDialog(this, "Adaugă Client", true);
@@ -266,7 +268,7 @@ public class LibraryApp extends JFrame {
     }
 
     public static void main(String[] args) {
-        new LibraryApp();
+        new AdminInterface();
     }
 }
 
