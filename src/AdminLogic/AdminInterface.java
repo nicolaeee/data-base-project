@@ -1,6 +1,9 @@
 package AdminLogic;
 
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.sql.*;
 
 public class AdminInterface extends JFrame {
@@ -9,46 +12,63 @@ public class AdminInterface extends JFrame {
     private final String PASSWORD = "";
 
     public AdminInterface() {
-        setTitle("Library Management System");
-        setSize(500, 500);
+        setTitle("Admin - Library Management");
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Crearea unui panel principal cu un layout BoxLayout
         JPanel mainPanel = new JPanel();
-        setContentPane(mainPanel);
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setLayout(new BorderLayout(10, 10));
+        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        add(mainPanel);
 
-        // Butoane pentru interfață
-        JButton addClientButton = new JButton("Adaugă Client");
-        JButton viewClientsButton = new JButton("Vizualizează Clienți");
-        JButton addBookButton = new JButton("Adaugă Carte");
-        JButton deleteBookButton = new JButton("Șterge Carte");
-        JButton filterBooksButton = new JButton("Filtrează Cărți după Autor");
+        // Titlu stilizat
+        JLabel titleLabel = new JLabel("Admin Panel - Library Management");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
+        // Crearea unui panel pentru butoane
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        mainPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        mainPanel.add(addClientButton);
-        mainPanel.add(viewClientsButton);
-        mainPanel.add(addBookButton);
-        mainPanel.add(deleteBookButton);
-        mainPanel.add(filterBooksButton);
+        // Butoane de acțiune
+        JButton addClientButton = createStyledButton("Adaugă Client");
+        JButton viewClientsButton = createStyledButton("Vizualizează Clienți");
+        JButton addBookButton = createStyledButton("Adaugă Carte");
+        JButton deleteBookButton = createStyledButton("Șterge Carte");
+        JButton filterBooksButton = createStyledButton("Filtrează Cărți");
 
-        // Acțiune pentru butonul "Adaugă Client"
+        // Adăugarea butoanelor în panel
+        buttonPanel.add(addClientButton);
+        buttonPanel.add(viewClientsButton);
+        buttonPanel.add(addBookButton);
+        buttonPanel.add(deleteBookButton);
+        buttonPanel.add(filterBooksButton);
+
+        // Evenimente pentru butoane
         addClientButton.addActionListener(e -> showAddClientDialog());
-
-        // Acțiune pentru butonul "Vizualizează Clienți"
         viewClientsButton.addActionListener(e -> displayClients());
-
-        // Acțiune pentru butonul "Adaugă Carte"
         addBookButton.addActionListener(e -> showAddBookDialog());
-
-        // Acțiune pentru butonul "Șterge Carte"
         deleteBookButton.addActionListener(e -> showDeleteBookDialog());
-
         filterBooksButton.addActionListener(e -> showFilterBooksDialog());
 
-
+        // Afisare
         setVisible(true);
     }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setBackground(new Color(70, 130, 180));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return button;
+    }
+
 
     // Metoda pentru a deschide dialogul de filtrare a cărților
     private void showFilterBooksDialog() {
@@ -203,6 +223,7 @@ public class AdminInterface extends JFrame {
         JTextField titleField = new JTextField(15);
         JTextField authorField = new JTextField(15);
         JTextField yearField = new JTextField(15);
+        JTextField priceField = new JTextField(15);
         JTextField genreField = new JTextField(15);
 
         panel.add(new JLabel("Titlu:"));
@@ -211,6 +232,8 @@ public class AdminInterface extends JFrame {
         panel.add(authorField);
         panel.add(new JLabel("An:"));
         panel.add(yearField);
+        panel.add(new JLabel("Pret:"));
+        panel.add(priceField);
         panel.add(new JLabel("Gen:"));
         panel.add(genreField);
 
@@ -221,9 +244,10 @@ public class AdminInterface extends JFrame {
             String title = titleField.getText();
             String author = authorField.getText();
             int year = Integer.parseInt(yearField.getText());
+            int price = Integer.parseInt(priceField.getText());
             String genre = genreField.getText();
 
-            Book book = new Book(title, author, year, genre);
+            Book book = new Book(title, author, year, price, genre);
             if (book.addBookToDatabase()) {
                 JOptionPane.showMessageDialog(dialog, "Carte adăugată cu succes!");
                 dialog.dispose();
@@ -255,7 +279,8 @@ public class AdminInterface extends JFrame {
         deleteButton.addActionListener(e -> {
             String title = titleField.getText();
 
-            Book book = new Book(title, "", 0, "");
+            Book book = new Book(title, "", 0, 0, "");
+
             if (book.deleteBookFromDatabase(title)) {
                 JOptionPane.showMessageDialog(dialog, "Carte ștearsă cu succes!");
                 dialog.dispose();
@@ -269,6 +294,9 @@ public class AdminInterface extends JFrame {
 
     public static void main(String[] args) {
         new AdminInterface();
+    }
+
+    public void createUI() {
     }
 }
 

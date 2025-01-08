@@ -3,11 +3,12 @@ package LogInLogic;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import ClientLogic.ClientInterface;
+import AdminLogic.AdminInterface;
 
 public class LogInterface {
 
@@ -16,82 +17,112 @@ public class LogInterface {
     private final String PASSWORD = "";
 
     public static void main(String[] args) {
-        LogInterface app = new LogInterface();
-        app.createUI();
+        SwingUtilities.invokeLater(LogInterface::new);
+    }
+
+    public LogInterface() {
+        createUI();
     }
 
     private void createUI() {
         // Crearea ferestrei principale
         JFrame frame = new JFrame("Logare Librarie");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLayout(new GridLayout(5, 1));
+        frame.setSize(500, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
 
-        // Crearea campurilor pentru utilizator si parola
-        JPanel userPanel = new JPanel();
-        userPanel.setLayout(new FlowLayout());
+        // Panel pentru titlu
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(70, 130, 180)); // Albastru deschis
+        JLabel titleLabel = new JLabel("Librarius");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
+
+        // Panel pentru formularul de logare
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new GridBagLayout());
+        formPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
         JLabel userLabel = new JLabel("Nume utilizator:");
         JTextField userField = new JTextField(20);
-        userPanel.add(userLabel);
-        userPanel.add(userField);
-
-        JPanel passPanel = new JPanel();
-        passPanel.setLayout(new FlowLayout());
         JLabel passLabel = new JLabel("Parola:");
         JPasswordField passField = new JPasswordField(20);
-        passPanel.add(passLabel);
-        passPanel.add(passField);
 
-        // Crearea butoanelor de logare si creare cont
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        formPanel.add(userLabel, gbc);
+
+        gbc.gridx = 1;
+        formPanel.add(userField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(passLabel, gbc);
+
+        gbc.gridx = 1;
+        formPanel.add(passField, gbc);
+
+        // Panel pentru butoane
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setLayout(new FlowLayout());
+
         JButton loginButton = new JButton("Logare");
         JButton adminButton = new JButton("Logare ca Administrator");
         JButton createAccountButton = new JButton("Creare Cont");
 
-        // Adaugarea componentelor in fereastra
-        frame.add(userPanel);
-        frame.add(passPanel);
-        frame.add(loginButton);
-        frame.add(adminButton);
-        frame.add(createAccountButton);
+        // Stilizare butoane
+        customizeButton(loginButton);
+        customizeButton(adminButton);
+        customizeButton(createAccountButton);
 
-        // Actiune pentru butonul Logare
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = userField.getText();
-                String password = new String(passField.getPassword());
-                // Logica pentru logarea utilizatorului
-                System.out.println("Utilizator: " + username + ", Parola: " + password);
-            }
-        });
+        buttonPanel.add(loginButton);
+        buttonPanel.add(adminButton);
+        buttonPanel.add(createAccountButton);
 
-        // Actiune pentru butonul Logare ca Administrator
-        adminButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = userField.getText();
-                String password = new String(passField.getPassword());
-                // Logica pentru logarea ca administrator
-                System.out.println("Administrator: " + username + ", Parola: " + password);
-            }
-        });
+        // Actiune pentru butoanele
+        loginButton.addActionListener(e -> handleLogin(userField.getText(), new String(passField.getPassword()), frame));
+        adminButton.addActionListener(e -> handleAdminLogin(userField.getText(), new String(passField.getPassword()), frame));
+        createAccountButton.addActionListener(e -> handleCreateAccount(userField.getText(), new String(passField.getPassword()), frame));
 
-        // Actiune pentru butonul Creare Cont
-        createAccountButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = userField.getText();
-                String password = new String(passField.getPassword());
-                if (createAccount(username, password)) {
-                    JOptionPane.showMessageDialog(frame, "Cont creat cu succes!");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Eroare la crearea contului.");
-                }
-            }
-        });
+        // Adăugare componente în fereastră
+        frame.add(titlePanel, BorderLayout.NORTH);
+        frame.add(formPanel, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
 
         // Afisarea ferestrei
         frame.setVisible(true);
+    }
+
+    private void handleLogin(String username, String password, JFrame frame) {
+        System.out.println("Utilizator: " + username + ", Parola: " + password);
+        SwingUtilities.invokeLater(() -> {
+            ClientInterface clientApp = new ClientInterface();
+            clientApp.createUI();
+        });
+        frame.dispose();
+    }
+
+    private void handleAdminLogin(String username, String password, JFrame frame) {
+        System.out.println("Administrator: " + username + ", Parola: " + password);
+        SwingUtilities.invokeLater(() -> {
+            AdminInterface adminApp = new AdminInterface();
+            adminApp.createUI();
+        });
+        frame.dispose();
+    }
+
+    private void handleCreateAccount(String username, String password, JFrame frame) {
+        if (createAccount(username, password)) {
+            JOptionPane.showMessageDialog(frame, "Cont creat cu succes!");
+        } else {
+            JOptionPane.showMessageDialog(frame, "Eroare la crearea contului.", "Eroare", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private boolean createAccount(String username, String password) {
@@ -106,5 +137,12 @@ public class LogInterface {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void customizeButton(JButton button) {
+        button.setBackground(new Color(70, 130, 180));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
     }
 }

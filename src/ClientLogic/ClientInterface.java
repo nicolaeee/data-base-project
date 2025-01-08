@@ -2,8 +2,6 @@ package ClientLogic;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,82 +12,81 @@ public class ClientInterface {
         app.createUI();
     }
 
-    private void createUI() {
+    public void createUI() {
         // Crearea ferestrei principale
         JFrame frame = new JFrame("Client - Magazin de Carti");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
-        frame.setLayout(new GridLayout(8, 1));
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null); // Centrarea ferestrei pe ecran
 
-        // Lista pentru cosul de cumparaturi
+        // Setarea unui layout modern
+        frame.setLayout(new BorderLayout());
+
+        // Panou pentru bara de sus
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JLabel titleLabel = new JLabel("Bine ați venit la Magazinul de Cărți!");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        topPanel.add(titleLabel);
+
+        // Panou pentru butoane
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 2, 10, 10));
+
+        // Lista pentru coșul de cumpărături
         List<String> shoppingCart = new ArrayList<>();
 
-        // Buton pentru cautare produse dupa denumire
-        JButton searchButton = new JButton("Cauta produs dupa denumire");
+        // Crearea butoanelor
+        JButton searchButton = createStyledButton("Caută produs după denumire");
         searchButton.addActionListener(e -> {
-            String searchQuery = JOptionPane.showInputDialog(frame, "Introduceti denumirea produsului:");
-            JOptionPane.showMessageDialog(frame, "Cautare pentru: " + searchQuery);
+            String searchQuery = JOptionPane.showInputDialog(frame, "Introduceți denumirea produsului:");
+            // Logica pentru căutarea produsului
         });
 
-        // Buton pentru selectarea unei categorii de produse
-        JButton categoryButton = new JButton("Selecteaza categorie");
+        JButton categoryButton = createStyledButton("Selectează genul");
         categoryButton.addActionListener(e -> {
-            String[] categories = {"Fictiune", "Stiinta", "Istorie", "Copii"};
-            String category = (String) JOptionPane.showInputDialog(frame, "Selectati o categorie:", "Categorii",
+            String[] categories = {"Ficțiune", "Știință", "Istorie", "Copii"};
+            String category = (String) JOptionPane.showInputDialog(frame, "Selectați un gen:", "Genul",
                     JOptionPane.QUESTION_MESSAGE, null, categories, categories[0]);
-            JOptionPane.showMessageDialog(frame, "Ati selectat categoria: " + category);
+            JOptionPane.showMessageDialog(frame, "Ați selectat categoria: " + category);
         });
 
-        // Buton pentru ordonarea produselor
-        JButton sortButton = new JButton("Ordoneaza produse dupa pret");
+        JButton sortButton = createStyledButton("Ordonează produse după preț");
         sortButton.addActionListener(e -> {
-            String[] options = {"Crescator", "Descrescator"};
-            String choice = (String) JOptionPane.showInputDialog(frame, "Selectati ordinea:", "Ordonare",
+            String[] options = {"Crescător", "Descrescător"};
+            String choice = (String) JOptionPane.showInputDialog(frame, "Selectați ordinea:", "Ordonare",
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             JOptionPane.showMessageDialog(frame, "Produsele vor fi ordonate " + choice);
         });
 
-        // Buton pentru adaugarea in cosul de cumparaturi
-        JButton addToCartButton = new JButton("Adauga in cosul de cumparaturi");
+        JButton addToCartButton = createStyledButton("Adaugă în coșul de cumpărături");
         addToCartButton.addActionListener(e -> {
-            String product = JOptionPane.showInputDialog(frame, "Introduceti numele produsului de adaugat in cos:");
+            String product = JOptionPane.showInputDialog(frame, "Introduceți numele produsului de adăugat în coș:");
             shoppingCart.add(product);
-            JOptionPane.showMessageDialog(frame, product + " a fost adaugat in cosul de cumparaturi.");
+            JOptionPane.showMessageDialog(frame, product + " a fost adăugat în coșul de cumpărături.");
         });
 
-        // Buton pentru vizualizarea unui produs
-        JButton viewProductButton = new JButton("Vizualizeaza produs");
-        viewProductButton.addActionListener(e -> {
-            String product = JOptionPane.showInputDialog(frame, "Introduceti numele produsului pentru vizualizare:");
-            JOptionPane.showMessageDialog(frame, "Informatii despre produs: " + product);
-        });
+        // Adăugarea butoanelor în panou
+        buttonPanel.add(searchButton);
+        buttonPanel.add(categoryButton);
+        buttonPanel.add(sortButton);
+        buttonPanel.add(addToCartButton);
 
-        // Buton pentru adaugarea unui comentariu
-        JButton addCommentButton = new JButton("Adauga comentariu");
-        addCommentButton.addActionListener(e -> {
-            String comment = JOptionPane.showInputDialog(frame, "Introduceti comentariul dvs.:");
-            JOptionPane.showMessageDialog(frame, "Comentariu adaugat: " + comment);
-        });
-
-        // Buton pentru filtrare dupa criterii
-        JButton filterButton = new JButton("Filtreaza produse");
-        filterButton.addActionListener(e -> {
-            String[] filters = {"Pret", "Autor", "Genul cartii", "Editura"};
-            String filter = (String) JOptionPane.showInputDialog(frame, "Selectati criteriul de filtrare:", "Filtrare",
-                    JOptionPane.QUESTION_MESSAGE, null, filters, filters[0]);
-            JOptionPane.showMessageDialog(frame, "Filtrare aplicata: " + filter);
-        });
-
-        // Adaugarea butoanelor in fereastra
-        frame.add(searchButton);
-        frame.add(categoryButton);
-        frame.add(sortButton);
-        frame.add(addToCartButton);
-        frame.add(viewProductButton);
-        frame.add(addCommentButton);
-        frame.add(filterButton);
+        // Adăugarea panourilor în fereastră
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(buttonPanel, BorderLayout.CENTER);
 
         // Afisarea ferestrei
         frame.setVisible(true);
+    }
+
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setBackground(new Color(70, 130, 180)); // Culoare similară cu cea din Admin
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return button;
     }
 }

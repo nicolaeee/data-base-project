@@ -9,14 +9,18 @@ public class Book {
     private String titlu;
     private String autor;
     private int an;
+    private int pret;
     private String gen;
 
-    public Book(String titlu, String autor, int an, String gen) {
+    public Book(String titlu, String autor, int an, int pret, String gen) {
         this.titlu = titlu;
         this.autor = autor;
         this.an = an;
+        this.pret = pret;
         this.gen = gen;
     }
+
+
 
     // Metoda pentru a adăuga o carte în baza de date
     public boolean addBookToDatabase() {
@@ -25,12 +29,13 @@ public class Book {
         final String PASSWORD = "";
 
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "INSERT INTO carti (titlu, autor, an, gen) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO carti (titlu, autor, an, pret, gen) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, titlu);
             preparedStatement.setString(2, autor);
             preparedStatement.setInt(3, an);
-            preparedStatement.setString(4, gen);
+            preparedStatement.setInt(4, pret); // Setează pret
+            preparedStatement.setString(5, gen);
 
             int addedRows = preparedStatement.executeUpdate();
             return addedRows > 0;
@@ -39,6 +44,7 @@ public class Book {
             return false;
         }
     }
+
 
     // Metoda pentru a șterge o carte din baza de date după titlu
     public boolean deleteBookFromDatabase(String titlu) {
