@@ -58,7 +58,7 @@ public class ClientInterface {
         // Adăugare butoane în meniul lateral
         JButton searchButton = createStyledButton("Caută produs");
         JButton categoryButton = createStyledButton("Selectează genul");
-        JButton sortButton = createStyledButton("Ordonează produse");
+        JButton sortButton = createStyledButton("Preț");
         JButton addToCartButton = createStyledButton("Adaugă în coș");
         sideMenuPanel.add(searchButton);
         sideMenuPanel.add(categoryButton);
@@ -72,6 +72,8 @@ public class ClientInterface {
         setupSearchButton(searchButton, frame);
 
         setupCategoryButton(categoryButton, frame);
+
+        setupPriceButton(sortButton, frame); // sortButton a fost redenumit în preț
 
 
         // Integrarea clasei SearchBar pentru searchBar
@@ -109,6 +111,15 @@ public class ClientInterface {
             selectGenLogic.selectGenres(frame);
         });
     }
+
+    //Metoda pentru filtrarea dupa pret
+    private void setupPriceButton(JButton priceButton, JFrame frame) {
+        priceButton.addActionListener(e -> {
+            PriceFilter priceFilterLogic = new PriceFilter();
+            priceFilterLogic.filterByPrice(frame);
+        });
+    }
+
 
 
     private JButton createStyledButton(String text) {
