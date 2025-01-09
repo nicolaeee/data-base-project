@@ -2,14 +2,8 @@ package ClientLogic;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class ClientInterface {
 
@@ -75,23 +69,16 @@ public class ClientInterface {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(sideMenuPanel, BorderLayout.EAST);
 
-
-
         setupSearchButton(searchButton, frame);
 
-
-
-        // Eveniment pentru căutare
+        // Integrarea clasei SearchBar pentru searchBar
         searchBar.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String searchQuery = searchBar.getText().trim();
-                    if (!searchQuery.isEmpty()) {
-                        searchBooks(searchQuery, frame);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Introduceți denumirea unei cărți pentru căutare!");
-                    }
+                    SearchBar searchBarLogic = new SearchBar();
+                    searchBarLogic.handleSearch(searchQuery, frame);
                 }
             }
         });
@@ -105,43 +92,12 @@ public class ClientInterface {
         isMenuVisible = !isMenuVisible;
         sideMenuPanel.setVisible(isMenuVisible);
     }
+
     private void setupSearchButton(JButton searchButton, JFrame frame) {
         searchButton.addActionListener(e -> {
             SearchButton searchButtonLogic = new SearchButton();
             searchButtonLogic.performSearch(frame);
         });
-    }
-
-    private void searchBooks(String searchQuery, JFrame frame) {
-        String DB_URL = "jdbc:mysql://localhost/librarie";
-        String USERNAME = "root";
-        String PASSWORD = "";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM carti WHERE titlu LIKE ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, "%" + searchQuery + "%");
-
-            ResultSet rs = stmt.executeQuery();
-            StringBuilder results = new StringBuilder("Rezultate găsite:\n");
-
-            while (rs.next()) {
-                results.append("Titlu: ").append(rs.getString("titlu"))
-                        .append(", Autor: ").append(rs.getString("autor"))
-                        .append(", Preț: ").append(rs.getDouble("pret"))
-                        .append(", Gen: ").append(rs.getString("gen"))
-                        .append("\n");
-            }
-
-            if (results.toString().equals("Rezultate găsite:\n")) {
-                JOptionPane.showMessageDialog(frame, "Nu au fost găsite produse cu acest titlu.");
-            } else {
-                JOptionPane.showMessageDialog(frame, results.toString());
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(frame, "Eroare la căutarea în baza de date: " + ex.getMessage());
-        }
     }
 
     private JButton createStyledButton(String text) {
@@ -153,8 +109,4 @@ public class ClientInterface {
         button.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         return button;
     }
-
-
-
-
 }
