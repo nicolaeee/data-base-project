@@ -71,6 +71,9 @@ public class ClientInterface {
 
         setupSearchButton(searchButton, frame);
 
+        setupCategoryButton(categoryButton, frame);
+
+
         // Integrarea clasei SearchBar pentru searchBar
         searchBar.addKeyListener(new KeyAdapter() {
             @Override
@@ -92,13 +95,21 @@ public class ClientInterface {
         isMenuVisible = !isMenuVisible;
         sideMenuPanel.setVisible(isMenuVisible);
     }
-
+    ////Aici pun metodele pentru fiecare buton
     private void setupSearchButton(JButton searchButton, JFrame frame) {
         searchButton.addActionListener(e -> {
             SearchButton searchButtonLogic = new SearchButton();
             searchButtonLogic.performSearch(frame);
         });
     }
+    ///Metoda pentru selectarea genului
+    private void setupCategoryButton(JButton categoryButton, JFrame frame) {
+        categoryButton.addActionListener(e -> {
+            SelectGen selectGenLogic = new SelectGen();
+            selectGenLogic.selectGenres(frame);
+        });
+    }
+
 
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
