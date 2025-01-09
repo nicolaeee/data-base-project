@@ -145,4 +145,6 @@ public class LogInterface {
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 14));
     }
+
+
 }

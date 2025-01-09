@@ -75,6 +75,12 @@ public class ClientInterface {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(sideMenuPanel, BorderLayout.EAST);
 
+
+
+        setupSearchButton(searchButton, frame);
+
+
+
         // Eveniment pentru căutare
         searchBar.addKeyListener(new KeyAdapter() {
             @Override
@@ -98,6 +104,12 @@ public class ClientInterface {
         // Logica pentru afișarea/ascunderea meniului
         isMenuVisible = !isMenuVisible;
         sideMenuPanel.setVisible(isMenuVisible);
+    }
+    private void setupSearchButton(JButton searchButton, JFrame frame) {
+        searchButton.addActionListener(e -> {
+            SearchButton searchButtonLogic = new SearchButton();
+            searchButtonLogic.performSearch(frame);
+        });
     }
 
     private void searchBooks(String searchQuery, JFrame frame) {
@@ -141,4 +153,8 @@ public class ClientInterface {
         button.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         return button;
     }
+
+
+
+
 }
