@@ -57,7 +57,9 @@ public class SearchBar {
                 addToCartButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        cartLogic.addToCart(title); // Folosește cartLogic pentru a adăuga cartea în coș
+                        // Creează un obiect Book și adaugă-l în coș
+                        AdminLogic.Book book = new AdminLogic.Book(title, author, price);
+                        cartLogic.addToCart(book);
                         JOptionPane.showMessageDialog(parentFrame, "Cartea a fost adăugată în coș!");
                     }
                 });
@@ -77,6 +79,7 @@ public class SearchBar {
             JOptionPane.showMessageDialog(parentFrame, "Eroare la căutarea în baza de date: " + ex.getMessage());
         }
     }
+
 
     public void handleSearch(String searchQuery, JFrame parentFrame) {
         searchBooks(searchQuery, parentFrame);

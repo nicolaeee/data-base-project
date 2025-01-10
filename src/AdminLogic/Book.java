@@ -9,10 +9,11 @@ public class Book {
     private String titlu;
     private String autor;
     private int an;
-    private int pret;
+    private double pret; // Schimbare: prețul este acum de tip `double`
     private String gen;
 
-    public Book(String titlu, String autor, int an, int pret, String gen) {
+    // Constructor principal
+    public Book(String titlu, String autor, int an, double pret, String gen) {
         this.titlu = titlu;
         this.autor = autor;
         this.an = an;
@@ -20,9 +21,55 @@ public class Book {
         this.gen = gen;
     }
 
+    // Constructor simplificat pentru utilizare în coș
+    public Book(String titlu, String autor, double pret) {
+        this.titlu = titlu;
+        this.autor = autor;
+        this.pret = pret;
+    }
 
+    // Getteri și Setteri pentru toate câmpurile
+    public String getTitlu() {
+        return titlu;
+    }
 
-    // Metoda pentru a adăuga o carte în baza de date
+    public void setTitlu(String titlu) {
+        this.titlu = titlu;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public int getAn() {
+        return an;
+    }
+
+    public void setAn(int an) {
+        this.an = an;
+    }
+
+    public double getPret() {
+        return pret;
+    }
+
+    public void setPret(double pret) {
+        this.pret = pret;
+    }
+
+    public String getGen() {
+        return gen;
+    }
+
+    public void setGen(String gen) {
+        this.gen = gen;
+    }
+
+    // Metodă pentru a adăuga o carte în baza de date
     public boolean addBookToDatabase() {
         final String DB_URL = "jdbc:mysql://localhost/librarie";
         final String USERNAME = "root";
@@ -34,7 +81,7 @@ public class Book {
             preparedStatement.setString(1, titlu);
             preparedStatement.setString(2, autor);
             preparedStatement.setInt(3, an);
-            preparedStatement.setInt(4, pret); // Setează pret
+            preparedStatement.setDouble(4, pret); // Utilizare tip double pentru preț
             preparedStatement.setString(5, gen);
 
             int addedRows = preparedStatement.executeUpdate();
@@ -45,8 +92,7 @@ public class Book {
         }
     }
 
-
-    // Metoda pentru a șterge o carte din baza de date după titlu
+    // Metodă pentru a șterge o carte din baza de date după titlu
     public boolean deleteBookFromDatabase(String titlu) {
         final String DB_URL = "jdbc:mysql://localhost/librarie";
         final String USERNAME = "root";
@@ -64,6 +110,4 @@ public class Book {
             return false;
         }
     }
-
-    // Getteri și Setteri pentru titlu, autor, an, și gen, dacă sunt necesari
 }
