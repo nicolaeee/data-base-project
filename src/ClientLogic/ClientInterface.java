@@ -35,14 +35,20 @@ public class ClientInterface {
         searchPanel.add(searchBar);
 
         // Butonul pentru coș
-        JButton cartButton = new JButton(new ImageIcon("src/Images/cart.png"));
+        ImageIcon cartIcon = new ImageIcon("src/Images/cart.png");
+        Image img = cartIcon.getImage(); // Obține imaginea din iconiță
+        Image scaledImg = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH); // Redimensionează imaginea
+        ImageIcon scaledIcon = new ImageIcon(scaledImg); // Creează un nou ImageIcon cu imaginea redimensionată
+
+        JButton cartButton = new JButton(scaledIcon);
         cartButton.setPreferredSize(new Dimension(40, 40));
-        cartButton.setBackground(new Color(70, 130, 180));
+        cartButton.setBackground(new Color(225, 225, 225));
         cartButton.setForeground(Color.WHITE);
         cartButton.setFocusPainted(false);
         cartButton.setBorder(BorderFactory.createEmptyBorder());
         cartButton.addActionListener(e -> cartLogic.showCart(frame)); // Afișează coșul când se apasă pe iconița de coș
         searchPanel.add(cartButton);
+
 
         topPanel.add(searchPanel, BorderLayout.CENTER);
 
