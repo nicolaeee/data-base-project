@@ -36,9 +36,9 @@ public class ClientInterface {
 
         // Butonul pentru coș
         ImageIcon cartIcon = new ImageIcon("src/Images/cart.png");
-        Image img = cartIcon.getImage(); // Obține imaginea din iconiță
-        Image scaledImg = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH); // Redimensionează imaginea
-        ImageIcon scaledIcon = new ImageIcon(scaledImg); // Creează un nou ImageIcon cu imaginea redimensionată
+        Image img = cartIcon.getImage();
+        Image scaledImg = img.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
         JButton cartButton = new JButton(scaledIcon);
         cartButton.setPreferredSize(new Dimension(40, 40));
@@ -46,9 +46,8 @@ public class ClientInterface {
         cartButton.setForeground(Color.WHITE);
         cartButton.setFocusPainted(false);
         cartButton.setBorder(BorderFactory.createEmptyBorder());
-        cartButton.addActionListener(e -> cartLogic.showCart(frame)); // Afișează coșul când se apasă pe iconița de coș
+        cartButton.addActionListener(e -> cartLogic.showCart(frame));
         searchPanel.add(cartButton);
-
 
         topPanel.add(searchPanel, BorderLayout.CENTER);
 
@@ -65,7 +64,7 @@ public class ClientInterface {
 
         // Panou pentru meniul lateral
         sideMenuPanel = new JPanel();
-        sideMenuPanel.setLayout(new GridLayout(4, 1, 5, 5));
+        sideMenuPanel.setLayout(new GridLayout(5, 1, 5, 5));
         sideMenuPanel.setBackground(new Color(220, 220, 220));
         sideMenuPanel.setPreferredSize(new Dimension(150, 0));
         sideMenuPanel.setVisible(false);
@@ -74,9 +73,11 @@ public class ClientInterface {
         JButton searchButton = createStyledButton("Caută produs");
         JButton categoryButton = createStyledButton("Selectează genul");
         JButton sortButton = createStyledButton("Preț");
+        JButton verifyOrderButton = createStyledButton("Verifică Comandă");
         sideMenuPanel.add(searchButton);
         sideMenuPanel.add(categoryButton);
         sideMenuPanel.add(sortButton);
+        sideMenuPanel.add(verifyOrderButton);
 
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(sideMenuPanel, BorderLayout.EAST);
@@ -84,6 +85,7 @@ public class ClientInterface {
         setupSearchButton(searchButton, frame);
         setupCategoryButton(categoryButton, frame);
         setupPriceButton(sortButton, frame);
+        setupVerifyOrderButton(verifyOrderButton, frame);
 
         // Integrarea clasei SearchBar pentru searchBar
         searchBar.addKeyListener(new KeyAdapter() {
@@ -91,13 +93,12 @@ public class ClientInterface {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String searchQuery = searchBar.getText().trim();
-                    SearchBar searchBarLogic = new SearchBar(cartLogic); // Păstrăm instanța CartLogic
+                    SearchBar searchBarLogic = new SearchBar(cartLogic);
                     searchBarLogic.handleSearch(searchQuery, frame);
                 }
             }
         });
 
-        // Afișarea ferestrei
         frame.setVisible(true);
     }
 
@@ -127,7 +128,14 @@ public class ClientInterface {
         });
     }
 
-    private JButton createStyledButton(String text) {
+    private void setupVerifyOrderButton(JButton verifyOrderButton, JFrame frame) {
+        verifyOrderButton.addActionListener(e -> {
+            VerifyOrder verifyOrderLogic = new VerifyOrder();
+            verifyOrderLogic.checkOrders(frame);
+        });
+    }
+
+        private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.PLAIN, 14));
         button.setBackground(new Color(70, 130, 180));
