@@ -64,21 +64,34 @@ public class Orders {
             String phone = phoneField.getText();
             String address = addressField.getText();
 
+            // Validare câmpuri obligatorii
             if (name.isEmpty() || surname.isEmpty() || email.isEmpty() ||
                     phone.isEmpty() || address.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "Toate câmpurile sunt obligatorii!");
                 return;
             }
 
+            // Validare e-mail
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                JOptionPane.showMessageDialog(dialog, "Introduceți un e-mail valid!");
+                return;
+            }
+
+            // Validare număr de telefon
+            if (!phone.matches("\\d{10}")) {
+                JOptionPane.showMessageDialog(dialog, "Introduceți un număr de telefon valid (10 cifre)!");
+                return;
+            }
+
             // Salvarea comenzii în baza de date
             try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-                String sql = "INSERT INTO orders (nume, prenume, posta, numar, adresa, titlulcartii, autor) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO orders (nume, prenume, email, numar, adresa, titlulcartii, autor) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
 
                 for (Book book : cartItems) {
                     stmt.setString(1, name);
                     stmt.setString(2, surname);
-                    stmt.setString(3, email);
+                    stmt.setString(3, email); // Modificat din posta în email
                     stmt.setString(4, phone);
                     stmt.setString(5, address);
                     stmt.setString(6, book.getTitlu());
