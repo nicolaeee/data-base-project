@@ -10,6 +10,7 @@ public class AdminInterface extends JFrame {
     private final String DB_URL = "jdbc:mysql://localhost/librarie";
     private final String USERNAME = "root";
     private final String PASSWORD = "";
+    private JPanel sideMenu;
 
     public AdminInterface() {
         setTitle("Admin - Library Management");
@@ -17,9 +18,8 @@ public class AdminInterface extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Crearea unui panel principal cu un layout BoxLayout
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(10, 10));
+        // Crearea unui panel principal
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(mainPanel);
 
@@ -29,24 +29,51 @@ public class AdminInterface extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
-        // Crearea unui panel pentru butoane
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(5, 1, 10, 10));
-        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        // Panoul meniului lateral
+        sideMenu = createSideMenu();
+        sideMenu.setVisible(false); // Ascundem meniul lateral inițial
+        add(sideMenu, BorderLayout.WEST);
 
-        // Butoane de acțiune
+        // Adăugarea unui buton de tip burger
+        JButton burgerButton = new JButton("☰");
+        burgerButton.setFont(new Font("Arial", Font.BOLD, 18));
+        burgerButton.setFocusPainted(false);
+        burgerButton.setBorderPainted(false);
+        burgerButton.setBackground(Color.LIGHT_GRAY);
+
+        // Adăugăm butonul în colțul dreapta sus
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(burgerButton, BorderLayout.EAST);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // Eveniment pentru afișarea/ascunderea meniului lateral
+        burgerButton.addActionListener(e -> toggleSideMenu());
+
+        setVisible(true);
+    }
+
+    private JPanel createSideMenu() {
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        menuPanel.setBackground(new Color(230, 230, 230));
+        menuPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        menuPanel.setPreferredSize(new Dimension(200, getHeight()));
+
+        // Adăugarea butoanelor în meniul lateral
         JButton addClientButton = createStyledButton("Adaugă Client");
         JButton viewClientsButton = createStyledButton("Vizualizează Clienți");
         JButton addBookButton = createStyledButton("Adaugă Carte");
         JButton deleteBookButton = createStyledButton("Șterge Carte");
         JButton filterBooksButton = createStyledButton("Filtrează Cărți");
+        JButton verifyOrdersButton = createStyledButton("Verifică Comenzi");
 
-        // Adăugarea butoanelor în panel
-        buttonPanel.add(addClientButton);
-        buttonPanel.add(viewClientsButton);
-        buttonPanel.add(addBookButton);
-        buttonPanel.add(deleteBookButton);
-        buttonPanel.add(filterBooksButton);
+
+        menuPanel.add(addClientButton);
+        menuPanel.add(viewClientsButton);
+        menuPanel.add(addBookButton);
+        menuPanel.add(deleteBookButton);
+        menuPanel.add(filterBooksButton);
+        menuPanel.add(verifyOrdersButton);
 
         // Evenimente pentru butoane
         addClientButton.addActionListener(e -> showAddClientDialog());
@@ -54,9 +81,14 @@ public class AdminInterface extends JFrame {
         addBookButton.addActionListener(e -> showAddBookDialog());
         deleteBookButton.addActionListener(e -> showDeleteBookDialog());
         filterBooksButton.addActionListener(e -> showFilterBooksDialog());
+        verifyOrdersButton.addActionListener(e -> openVerifyOrders());
 
-        // Afisare
-        setVisible(true);
+
+        return menuPanel;
+    }
+    private void openVerifyOrders() {
+        VerifyOrdersAdmin verifyOrdersAdmin = new VerifyOrdersAdmin();
+        verifyOrdersAdmin.checkOrders(this);
     }
 
     private JButton createStyledButton(String text) {
@@ -69,6 +101,11 @@ public class AdminInterface extends JFrame {
         return button;
     }
 
+    private void toggleSideMenu() {
+        sideMenu.setVisible(!sideMenu.isVisible());
+        revalidate();
+        repaint();
+    }
 
     // Metoda pentru a deschide dialogul de filtrare a cărților
     private void showFilterBooksDialog() {
