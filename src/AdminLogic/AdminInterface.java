@@ -96,24 +96,20 @@ public class AdminInterface extends JFrame {
 
     private void addSearchBar(JPanel topPanel) {
         JTextField searchBar = new JTextField(20);
-        JButton searchButton = new JButton("Caută");
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Căutare carte:"));
-        searchPanel.add(searchBar);
-        searchPanel.add(searchButton);
 
-        searchButton.addActionListener(e -> {
+        searchBar.addActionListener(e -> {
             String query = searchBar.getText();
             if (!query.isEmpty()) {
                 SearchBooks searchBooks = new SearchBooks();
-                searchBooks.openSearchDialog(this);
+                searchBooks.searchAndOpenResults(query, this);
             } else {
                 JOptionPane.showMessageDialog(this, "Introduceți un termen pentru căutare!", "Eroare", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        topPanel.add(searchPanel, BorderLayout.CENTER);
+        topPanel.add(searchBar, BorderLayout.CENTER);
     }
+
 
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);

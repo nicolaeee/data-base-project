@@ -9,38 +9,21 @@ public class SearchBooks {
     private final String USERNAME = "root";
     private final String PASSWORD = "";
 
-    public void openSearchDialog(JFrame parent) {
-        JDialog dialog = new JDialog(parent, "Caută Carte", true);
-        dialog.setSize(400, 400);
+    public void searchAndOpenResults(String query, JFrame parent) {
+        JDialog dialog = new JDialog(parent, "Rezultate Căutare", true);
+        dialog.setSize(600, 400);
         dialog.setLocationRelativeTo(parent);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout(10, 10));
         dialog.add(panel);
 
-        // Search bar și buton de căutare
-        JTextField searchField = new JTextField(20);
-        JButton searchButton = new JButton("Caută");
-        JPanel searchPanel = new JPanel();
-        searchPanel.add(new JLabel("Caută carte:"));
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
-        panel.add(searchPanel, BorderLayout.NORTH);
-
         // Zonă pentru afișarea rezultatelor
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> resultsList = new JList<>(listModel);
         panel.add(new JScrollPane(resultsList), BorderLayout.CENTER);
 
-        searchButton.addActionListener(e -> {
-            String query = searchField.getText();
-            listModel.clear();
-            if (!query.isEmpty()) {
-                searchBooks(query, listModel);
-            } else {
-                JOptionPane.showMessageDialog(dialog, "Introduceți un termen de căutare!", "Eroare", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        searchBooks(query, listModel);
 
         resultsList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -77,6 +60,7 @@ public class SearchBooks {
     }
 
     private void openBookDetailsDialog(int bookId, JDialog parentDialog) {
+        // (Păstrăm logica pentru modificarea unei cărți, similar cu exemplul anterior.)
         JDialog dialog = new JDialog(parentDialog, "Detalii Carte", true);
         dialog.setSize(400, 400);
         dialog.setLocationRelativeTo(parentDialog);
