@@ -54,10 +54,11 @@ public class AdminInterface extends JFrame {
 
     private JPanel createSideMenu() {
         JPanel menuPanel = new JPanel();
-        menuPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        // Modificăm GridLayout să aibă o coloană (1), astfel încât butoanele să fie unul sub altul
+        menuPanel.setLayout(new GridLayout(0, 1, 10, 10)); // 0 rânduri (determină automat câte sunt necesare), 1 coloană
         menuPanel.setBackground(new Color(230, 230, 230));
         menuPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        menuPanel.setPreferredSize(new Dimension(200, getHeight()));
+        menuPanel.setPreferredSize(new Dimension(200, getHeight())); // Menținem lățimea
 
         // Adăugarea butoanelor în meniul lateral
         JButton addClientButton = createStyledButton("Adaugă Client");
@@ -67,7 +68,7 @@ public class AdminInterface extends JFrame {
         JButton filterBooksButton = createStyledButton("Filtrează Cărți");
         JButton verifyOrdersButton = createStyledButton("Verifică Comenzi");
 
-
+        // Adăugăm butoanele unul sub altul
         menuPanel.add(addClientButton);
         menuPanel.add(viewClientsButton);
         menuPanel.add(addBookButton);
@@ -83,9 +84,9 @@ public class AdminInterface extends JFrame {
         filterBooksButton.addActionListener(e -> showFilterBooksDialog());
         verifyOrdersButton.addActionListener(e -> openVerifyOrders());
 
-
         return menuPanel;
     }
+
     private void openVerifyOrders() {
         VerifyOrdersAdmin verifyOrdersAdmin = new VerifyOrdersAdmin();
         verifyOrdersAdmin.checkOrders(this);
