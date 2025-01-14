@@ -3,7 +3,17 @@ package AdminLogic;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.*;
+import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 
 public class VerifyOrdersAdmin {
 
@@ -28,9 +38,7 @@ public class VerifyOrdersAdmin {
             orderDialog.setLayout(new BorderLayout());
             orderDialog.setLocationRelativeTo(parentFrame);
 
-            DefaultTableModel tableModel = new DefaultTableModel(
-                    new String[]{"Nume", "Prenume", "Email", "Telefon", "Adresă", "Carte", "Autor"}, 0
-            );
+            DefaultTableModel tableModel = new DefaultTableModel(new String[]{ "Nume", "Prenume", "Email", "Telefon", "Adresă", "Carte", "Autor"}, 0);
 
             do {
                 tableModel.addRow(new Object[]{
@@ -48,10 +56,87 @@ public class VerifyOrdersAdmin {
             JScrollPane scrollPane = new JScrollPane(orderTable);
             orderDialog.add(scrollPane, BorderLayout.CENTER);
 
+            JPanel buttonPanel = new JPanel();
+            JButton exportPDFButton = new JButton("Exportă PDF");
+            JButton exportXLSButton = new JButton("Exportă XLS");
+
+            exportPDFButton.addActionListener(e -> exportToPDF(orderTable));
+            exportXLSButton.addActionListener(e -> exportToXLS(orderTable));
+
+            buttonPanel.add(exportPDFButton);
+            buttonPanel.add(exportXLSButton);
+
+            orderDialog.add(buttonPanel, BorderLayout.SOUTH);
             orderDialog.setVisible(true);
 
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(parentFrame, "Eroare la încărcarea comenzilor: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(parentFrame, "Eroare la verificarea comenzilor: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void exportToPDF(JTable table) {
+        try {
+            // Calea completă către desktop
+            String filePath = System.getProperty("user.home") + "\\Desktop\\comanda.pdf";
+
+            // Crează un obiect Document pentru PDF
+            Document document = new Document();
+
+            // Creați un writer care va scrie documentul pe fișierul PDF
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+
+            // Deschide documentul pentru a adăuga conținut
+            document.open();
+
+            // Adaugă un titlu
+            document.add(new Phrase("Comenzile din Sistem\n\n"));
+
+            // Adaugă datele din tabel
+            for (int row = 0; row < table.getRowCount(); row++) {
+                document.add(new Paragraph("Nume: " + table.getValueAt(row, 0).toString()));
+                document.add(new Paragraph("Prenume: " + table.getValueAt(row, 1).toString()));
+                document.add(new Paragraph("Email: " + table.getValueAt(row, 2).toString()));
+                document.add(new Paragraph("Telefon: " + table.getValueAt(row, 3).toString()));
+                document.add(new Paragraph("Adresă: " + table.getValueAt(row, 4).toString()));
+                document.add(new Paragraph("Carte: " + table.getValueAt(row, 5).toString()));
+                document.add(new Paragraph("Autor: " + table.getValueAt(row, 6).toString()));
+
+                document.add(new Paragraph("\n"));
+            }
+
+            document.close();
+
+            JOptionPane.showMessageDialog(null, "Comanda a fost exportată în PDF la " + filePath);
+        } catch (DocumentException | java.io.IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Eroare la exportul în PDF: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void exportToXLS(JTable table) {
+        try {
+            // Calea completă către desktop
+            String filePath = System.getProperty("user.home") + "\\Desktop\\comanda.xls";
+
+            // Logica pentru exportul în fișierul XLS
+            FileWriter writer = new FileWriter(filePath);
+
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                writer.write(table.getColumnName(i) + "\t");
+            }
+            writer.write("\n");
+
+            for (int i = 0; i < table.getRowCount(); i++) {
+                for (int j = 0; j < table.getColumnCount(); j++) {
+                    writer.write(table.getValueAt(i, j).toString() + "\t");
+                }
+                writer.write("\n");
+            }
+
+            writer.close();
+            JOptionPane.showMessageDialog(null, "Comanda a fost exportată în XLS la " + filePath);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Eroare la exportul în XLS: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

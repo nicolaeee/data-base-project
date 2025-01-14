@@ -40,14 +40,27 @@ public class SearchBooks {
 
     private void searchBooks(String query, DefaultListModel<String> listModel) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT id, titlu FROM carti WHERE titlu LIKE ?";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, "%" + query + "%");
+            String sql;
+            PreparedStatement preparedStatement;
+
+            // Verificăm dacă query-ul este un număr (pentru a căuta cărți pe baza prețului)
+            if (isNumeric(query)) {
+                sql = "SELECT id, titlu, pret FROM carti WHERE pret <= ?";
+                preparedStatement = conn.prepareStatement(sql);
+                preparedStatement.setInt(1, Integer.parseInt(query)); // Setăm prețul cărților
+            } else {
+                // Dacă nu este număr, căutăm după titlu
+                sql = "SELECT id, titlu FROM carti WHERE titlu LIKE ?";
+                preparedStatement = conn.prepareStatement(sql);
+                preparedStatement.setString(1, "%" + query + "%"); // Căutăm titluri care conțin query-ul
+            }
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String title = resultSet.getString("titlu");
+                // Adăugăm titlul și ID-ul cărții în listă
                 listModel.addElement(id + " - " + title);
             }
 
@@ -59,8 +72,16 @@ public class SearchBooks {
         }
     }
 
+    private boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str); // Dacă reușește să convertească în int, înseamnă că este număr
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     private void openBookDetailsDialog(int bookId, JDialog parentDialog) {
-        // (Păstrăm logica pentru modificarea unei cărți, similar cu exemplul anterior.)
         JDialog dialog = new JDialog(parentDialog, "Detalii Carte", true);
         dialog.setSize(400, 400);
         dialog.setLocationRelativeTo(parentDialog);
