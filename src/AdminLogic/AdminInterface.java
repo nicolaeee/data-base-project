@@ -18,6 +18,8 @@ public class AdminInterface extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+
+
         // Crearea unui panel principal cu BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -98,8 +100,21 @@ public class AdminInterface extends JFrame {
         filterBooksButton.addActionListener(e -> showFilterBooksDialog());
         verifyOrdersButton.addActionListener(e -> openVerifyOrders());
 
+        JButton generateReportButton = createStyledButton("Raport Comenzi");
+        menuPanel.add(generateReportButton);
+
+// Adaugăm eveniment pentru acest buton
+        generateReportButton.addActionListener(e -> openGenerateReport());
+
+
         return menuPanel;
     }
+
+    private void openGenerateReport() {
+        Raport raport = new Raport();
+        raport.generateReport();  // Apelează metoda pentru generarea raportului
+    }
+
 
     private void openVerifyOrders() {
         VerifyOrdersAdmin verifyOrdersAdmin = new VerifyOrdersAdmin();
