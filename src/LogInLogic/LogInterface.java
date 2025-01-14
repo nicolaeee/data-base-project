@@ -2,7 +2,6 @@ package LogInLogic;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -81,8 +80,8 @@ public class LogInterface {
         buttonPanel.add(adminButton);
         buttonPanel.add(createAccountButton);
 
-        loginButton.addActionListener(e -> handleLogin(userField.getText(), new String(passField.getPassword()), frame));
-        adminButton.addActionListener(e -> handleAdminLogin(userField.getText(), new String(passField.getPassword()), frame));
+        loginButton.addActionListener(e -> handleLogin(userField.getText(), new String(passField.getPassword()), frame, "users", "utilizator"));
+        adminButton.addActionListener(e -> handleLogin(userField.getText(), new String(passField.getPassword()), frame, "admins", "administrator"));
         createAccountButton.addActionListener(e -> handleCreateAccount(userField.getText(), new String(passField.getPassword()), frame));
 
         frame.add(titlePanel, BorderLayout.NORTH);
@@ -92,61 +91,41 @@ public class LogInterface {
         frame.setVisible(true);
     }
 
-    private void handleLogin(String username, String password, JFrame frame) {
+    private void handleLogin(String username, String password, JFrame frame, String tableName, String userType) {
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "Completați toate câmpurile!", "Eroare", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                JOptionPane.showMessageDialog(frame, "Autentificare reușită! Bun venit, " + username + "!");
-                SwingUtilities.invokeLater(() -> {
+        if (authenticate(username, password, tableName)) {
+            JOptionPane.showMessageDialog(frame, "Autentificare reușită! Bun venit, " + userType + " " + username + "!");
+            SwingUtilities.invokeLater(() -> {
+                if (tableName.equals("users")) {
                     ClientInterface clientApp = new ClientInterface();
                     clientApp.createUI();
-                });
-                frame.dispose();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Nume de utilizator sau parolă incorectă!", "Eroare", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "Eroare la conectarea cu baza de date: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    AdminInterface adminApp = new AdminInterface();
+                    adminApp.createUI();
+                }
+            });
+            frame.dispose();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Nume de utilizator sau parolă incorectă!", "Eroare", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void handleAdminLogin(String username, String password, JFrame frame) {
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Completați toate câmpurile!", "Eroare", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
+    private boolean authenticate(String username, String password, String tableName) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
-            String sql = "SELECT * FROM admins WHERE username = ? AND password = ?";
+            String sql = "SELECT * FROM " + tableName + " WHERE username = ? AND password = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
             stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                JOptionPane.showMessageDialog(frame, "Autentificare reușită! Bun venit, administrator " + username + "!");
-                SwingUtilities.invokeLater(() -> {
-                    AdminInterface adminApp = new AdminInterface();
-                    adminApp.createUI();
-                });
-                frame.dispose();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Nume de utilizator sau parolă incorectă!", "Eroare", JOptionPane.ERROR_MESSAGE);
-            }
+            return rs.next();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "Eroare la conectarea cu baza de date: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return false;
         }
     }
 
