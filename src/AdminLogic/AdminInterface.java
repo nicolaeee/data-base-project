@@ -1,6 +1,8 @@
 package AdminLogic;
 
 
+import LogInLogic.LogInterface;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -83,6 +85,7 @@ public class AdminInterface extends JFrame {
         JButton deleteBookButton = createStyledButton("Șterge Carte");
         JButton filterBooksButton = createStyledButton("Filtrează Cărți");
         JButton verifyOrdersButton = createStyledButton("Verifică Comenzi");
+        JButton logoutButton = createStyledButton("Logout");
 
         // Adăugăm butoanele unul sub altul
         menuPanel.add(addClientButton);
@@ -91,6 +94,7 @@ public class AdminInterface extends JFrame {
         menuPanel.add(deleteBookButton);
         menuPanel.add(filterBooksButton);
         menuPanel.add(verifyOrdersButton);
+        menuPanel.add(logoutButton);
 
         // Evenimente pentru butoane
         addClientButton.addActionListener(e -> showAddClientDialog());
@@ -99,6 +103,7 @@ public class AdminInterface extends JFrame {
         deleteBookButton.addActionListener(e -> showDeleteBookDialog());
         filterBooksButton.addActionListener(e -> showFilterBooksDialog());
         verifyOrdersButton.addActionListener(e -> openVerifyOrders());
+        logoutButton.addActionListener(e -> logout());
 
         JButton generateReportButton = createStyledButton("Raport Comenzi");
         menuPanel.add(generateReportButton);
@@ -108,6 +113,15 @@ public class AdminInterface extends JFrame {
 
 
         return menuPanel;
+    }
+
+    private void logout() {
+        // Închide fereastra AdminInterface
+        this.dispose();
+
+        // Deschide fereastra LogInInterface
+        LogInterface loginInterface = new LogInterface();
+        loginInterface.setVisible(true);
     }
 
     private void openGenerateReport() {
