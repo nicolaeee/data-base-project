@@ -1,5 +1,7 @@
 package ClientLogic;
 
+import LogInLogic.LogInterface;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -66,7 +68,7 @@ public class ClientInterface {
 
         // Panou pentru meniul lateral
         sideMenuPanel = new JPanel();
-        sideMenuPanel.setLayout(new GridLayout(5, 1, 5, 5));
+        sideMenuPanel.setLayout(new GridLayout(6, 1, 5, 5));
         sideMenuPanel.setBackground(new Color(220, 220, 220));
         sideMenuPanel.setPreferredSize(new Dimension(150, 0));
         sideMenuPanel.setVisible(false);
@@ -77,11 +79,13 @@ public class ClientInterface {
         JButton sortButton = createStyledButton("Preț");
         JButton verifyOrderButton = createStyledButton("Verifică Comandă");
         JButton historyButton = createStyledButton("Istoric Utilizare");
+        JButton logoutButton = createStyledButton("Logout");
         sideMenuPanel.add(searchButton);
         sideMenuPanel.add(categoryButton);
         sideMenuPanel.add(sortButton);
         sideMenuPanel.add(verifyOrderButton);
         sideMenuPanel.add(historyButton);
+        sideMenuPanel.add(logoutButton);  // Adăugăm butonul de logout
 
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(sideMenuPanel, BorderLayout.EAST);
@@ -91,6 +95,7 @@ public class ClientInterface {
         setupPriceButton(sortButton, frame);
         setupVerifyOrderButton(verifyOrderButton, frame);
         historyButton.addActionListener(e -> historyLogic.showHistory(frame));
+        logoutButton.addActionListener(e -> logout());
 
         BooksInterface booksInterface = new BooksInterface(cartLogic);
         JScrollPane booksScrollPane = new JScrollPane(booksInterface);
@@ -118,6 +123,19 @@ public class ClientInterface {
 
         frame.setVisible(true);
     }
+
+    private void logout() {
+        // Închide fereastra ClientInterface
+        this.dispose();
+
+        // Deschide fereastra LogInInterface
+        LogInterface loginInterface = new LogInterface();
+        loginInterface.setVisible(true);
+    }
+
+    private void dispose() {
+    }
+
 
     private void toggleMenu() {
         isMenuVisible = !isMenuVisible;

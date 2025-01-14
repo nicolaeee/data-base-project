@@ -44,6 +44,7 @@ public class SearchBar {
                 String author = rs.getString("autor");
                 double price = rs.getDouble("pret");
                 String genre = rs.getString("gen");
+                int id = rs.getInt("id"); // Preia id-ul in afara EventListener-ului
 
                 JPanel bookPanel = new JPanel();
                 bookPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -58,7 +59,7 @@ public class SearchBar {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         try {
-                            int id = rs.getInt("id"); // Extrage id-ul din ResultSet
+                            // Folosește id-ul deja preluat din ResultSet
                             AdminLogic.Book book = new AdminLogic.Book(id, title, author, price);
                             cartLogic.addToCart(book);
                             JOptionPane.showMessageDialog(parentFrame, "Cartea a fost adăugată în coș!");
