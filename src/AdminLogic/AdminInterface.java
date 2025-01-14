@@ -31,7 +31,7 @@ public class AdminInterface extends JFrame {
 
         // Panoul meniului lateral
         sideMenu = createSideMenu();
-        sideMenu.setVisible(false); // Ascundem meniul lateral inițial
+        sideMenu.setVisible(false); // Ascundem meniul la teral inițial
         mainPanel.add(sideMenu, BorderLayout.WEST);
 
         // Adăugarea unui buton de tip burger
@@ -55,8 +55,6 @@ public class AdminInterface extends JFrame {
 
         // Crearea unui panou pentru grafice cu GridLayout
         JPanel chartPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        chartPanel.add(analytics.getOrdersForTodayChart());
-        chartPanel.add(analytics.getOrdersForWeekChart());
         chartPanel.add(analytics.getCurrentStockChart());
         chartPanel.add(analytics.getOrdersByClientChart());
 
