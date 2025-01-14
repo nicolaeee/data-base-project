@@ -14,11 +14,11 @@ public class AdminInterface extends JFrame {
 
     public AdminInterface() {
         setTitle("Admin - Library Management");
-        setSize(600, 600);
+        setSize(800, 800); // Dimensiune mai mare pentru a permite spațiu suficient
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Crearea unui panel principal
+        // Crearea unui panel principal cu BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(mainPanel);
@@ -32,7 +32,7 @@ public class AdminInterface extends JFrame {
         // Panoul meniului lateral
         sideMenu = createSideMenu();
         sideMenu.setVisible(false); // Ascundem meniul lateral inițial
-        add(sideMenu, BorderLayout.WEST);
+        mainPanel.add(sideMenu, BorderLayout.WEST);
 
         // Adăugarea unui buton de tip burger
         JButton burgerButton = new JButton("☰");
@@ -41,7 +41,7 @@ public class AdminInterface extends JFrame {
         burgerButton.setBorderPainted(false);
         burgerButton.setBackground(Color.LIGHT_GRAY);
 
-        // Adăugăm butonul în colțul dreapta sus
+        // Crearea unui panou pentru bara de sus (topPanel)
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(burgerButton, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
@@ -50,8 +50,22 @@ public class AdminInterface extends JFrame {
         burgerButton.addActionListener(e -> toggleSideMenu());
         addSearchBar(topPanel);
 
+        // Crearea instanței Analytics pentru grafice
+        Analytics analytics = new Analytics();
+
+        // Crearea unui panou pentru grafice cu GridLayout
+        JPanel chartPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        chartPanel.add(analytics.getOrdersForTodayChart());
+        chartPanel.add(analytics.getOrdersForWeekChart());
+        chartPanel.add(analytics.getCurrentStockChart());
+        chartPanel.add(analytics.getOrdersByClientChart());
+
+        // Adăugarea chartPanel în zona centrală a layout-ului principal
+        mainPanel.add(chartPanel, BorderLayout.CENTER);
+
         setVisible(true);
     }
+
 
 
     private JPanel createSideMenu() {

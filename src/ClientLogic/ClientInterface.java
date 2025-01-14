@@ -10,6 +10,8 @@ public class ClientInterface {
     private JPanel sideMenuPanel;
     private boolean isMenuVisible = false;
     private CartLogic cartLogic = new CartLogic(); // Instanță globală pentru coș
+    private HistoryLogic historyLogic = new HistoryLogic(); // Instanță globală pentru istoric
+
 
     public static void main(String[] args) {
         ClientInterface app = new ClientInterface();
@@ -74,10 +76,12 @@ public class ClientInterface {
         JButton categoryButton = createStyledButton("Selectează genul");
         JButton sortButton = createStyledButton("Preț");
         JButton verifyOrderButton = createStyledButton("Verifică Comandă");
+        JButton historyButton = createStyledButton("Istoric Utilizare");
         sideMenuPanel.add(searchButton);
         sideMenuPanel.add(categoryButton);
         sideMenuPanel.add(sortButton);
         sideMenuPanel.add(verifyOrderButton);
+        sideMenuPanel.add(historyButton);
 
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(sideMenuPanel, BorderLayout.EAST);
@@ -86,6 +90,8 @@ public class ClientInterface {
         setupCategoryButton(categoryButton, frame);
         setupPriceButton(sortButton, frame);
         setupVerifyOrderButton(verifyOrderButton, frame);
+        historyButton.addActionListener(e -> historyLogic.showHistory(frame));
+
 
         // Integrarea clasei SearchBar pentru searchBar
         searchBar.addKeyListener(new KeyAdapter() {
@@ -94,6 +100,8 @@ public class ClientInterface {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String searchQuery = searchBar.getText().trim();
                     SearchBar searchBarLogic = new SearchBar(cartLogic);
+                    searchBarLogic.handleSearch(searchQuery, frame);
+                    historyLogic.addAction("Căutare efectuată: " + searchQuery);
                     searchBarLogic.handleSearch(searchQuery, frame);
                 }
             }
@@ -105,25 +113,34 @@ public class ClientInterface {
     private void toggleMenu() {
         isMenuVisible = !isMenuVisible;
         sideMenuPanel.setVisible(isMenuVisible);
+        historyLogic.addAction("Meniul lateral " + (isMenuVisible ? "deschis" : "închis"));
     }
 
     private void setupSearchButton(JButton searchButton, JFrame frame) {
         searchButton.addActionListener(e -> {
+            historyLogic.addAction("Butonul 'Caută produs' apăsat");
             SearchButton searchButtonLogic = new SearchButton();
             searchButtonLogic.performSearch(frame);
         });
     }
 
+
+
+
     private void setupCategoryButton(JButton categoryButton, JFrame frame) {
         categoryButton.addActionListener(e -> {
+            historyLogic.addAction("Butonul 'Selectează genul' apăsat");
             SelectGen selectGenLogic = new SelectGen();
             selectGenLogic.selectGenres(frame);
         });
     }
 
+
     private void setupPriceButton(JButton priceButton, JFrame frame) {
         priceButton.addActionListener(e -> {
             PriceFilter priceFilterLogic = new PriceFilter();
+            priceFilterLogic.filterByPrice(frame);
+            historyLogic.addAction("Butonul 'Preț' apăsat");
             priceFilterLogic.filterByPrice(frame);
         });
     }
@@ -131,6 +148,8 @@ public class ClientInterface {
     private void setupVerifyOrderButton(JButton verifyOrderButton, JFrame frame) {
         verifyOrderButton.addActionListener(e -> {
             VerifyOrder verifyOrderLogic = new VerifyOrder();
+            verifyOrderLogic.checkOrders(frame);
+            historyLogic.addAction("Butonul 'Verifică Comandă' apăsat");
             verifyOrderLogic.checkOrders(frame);
         });
     }
