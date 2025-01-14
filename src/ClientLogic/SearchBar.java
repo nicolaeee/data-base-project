@@ -57,10 +57,14 @@ public class SearchBar {
                 addToCartButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Creează un obiect Book și adaugă-l în coș
-                        AdminLogic.Book book = new AdminLogic.Book(title, author, price);
-                        cartLogic.addToCart(book);
-                        JOptionPane.showMessageDialog(parentFrame, "Cartea a fost adăugată în coș!");
+                        try {
+                            int id = rs.getInt("id"); // Extrage id-ul din ResultSet
+                            AdminLogic.Book book = new AdminLogic.Book(id, title, author, price);
+                            cartLogic.addToCart(book);
+                            JOptionPane.showMessageDialog(parentFrame, "Cartea a fost adăugată în coș!");
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(parentFrame, "Eroare la adăugarea în coș: " + ex.getMessage());
+                        }
                     }
                 });
 

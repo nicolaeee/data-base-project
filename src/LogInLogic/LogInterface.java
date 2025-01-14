@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import ClientLogic.ClientInterface;
 import AdminLogic.AdminInterface;
@@ -25,22 +26,19 @@ public class LogInterface {
     }
 
     private void createUI() {
-        // Crearea ferestrei principale
         JFrame frame = new JFrame("Logare Librarie");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
 
-        // Panel pentru titlu
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(70, 130, 180)); // Albastru deschis
+        titlePanel.setBackground(new Color(70, 130, 180));
         JLabel titleLabel = new JLabel("Librarius");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
 
-        // Panel pentru formularul de logare
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
@@ -67,7 +65,6 @@ public class LogInterface {
         gbc.gridx = 1;
         formPanel.add(passField, gbc);
 
-        // Panel pentru butoane
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.setLayout(new FlowLayout());
@@ -76,7 +73,6 @@ public class LogInterface {
         JButton adminButton = new JButton("Logare ca Administrator");
         JButton createAccountButton = new JButton("Creare Cont");
 
-        // Stilizare butoane
         customizeButton(loginButton);
         customizeButton(adminButton);
         customizeButton(createAccountButton);
@@ -85,39 +81,81 @@ public class LogInterface {
         buttonPanel.add(adminButton);
         buttonPanel.add(createAccountButton);
 
-        // Actiune pentru butoanele
         loginButton.addActionListener(e -> handleLogin(userField.getText(), new String(passField.getPassword()), frame));
         adminButton.addActionListener(e -> handleAdminLogin(userField.getText(), new String(passField.getPassword()), frame));
         createAccountButton.addActionListener(e -> handleCreateAccount(userField.getText(), new String(passField.getPassword()), frame));
 
-        // Adăugare componente în fereastră
         frame.add(titlePanel, BorderLayout.NORTH);
         frame.add(formPanel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Afisarea ferestrei
         frame.setVisible(true);
     }
 
     private void handleLogin(String username, String password, JFrame frame) {
-        System.out.println("Utilizator: " + username + ", Parola: " + password);
-        SwingUtilities.invokeLater(() -> {
-            ClientInterface clientApp = new ClientInterface();
-            clientApp.createUI();
-        });
-        frame.dispose();
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Completați toate câmpurile!", "Eroare", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                JOptionPane.showMessageDialog(frame, "Autentificare reușită! Bun venit, " + username + "!");
+                SwingUtilities.invokeLater(() -> {
+                    ClientInterface clientApp = new ClientInterface();
+                    clientApp.createUI();
+                });
+                frame.dispose();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Nume de utilizator sau parolă incorectă!", "Eroare", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(frame, "Eroare la conectarea cu baza de date: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void handleAdminLogin(String username, String password, JFrame frame) {
-        System.out.println("Administrator: " + username + ", Parola: " + password);
-        SwingUtilities.invokeLater(() -> {
-            AdminInterface adminApp = new AdminInterface();
-            adminApp.createUI();
-        });
-        frame.dispose();
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Completați toate câmpurile!", "Eroare", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            String sql = "SELECT * FROM admins WHERE username = ? AND password = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                JOptionPane.showMessageDialog(frame, "Autentificare reușită! Bun venit, administrator " + username + "!");
+                SwingUtilities.invokeLater(() -> {
+                    AdminInterface adminApp = new AdminInterface();
+                    adminApp.createUI();
+                });
+                frame.dispose();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Nume de utilizator sau parolă incorectă!", "Eroare", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(frame, "Eroare la conectarea cu baza de date: " + e.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void handleCreateAccount(String username, String password, JFrame frame) {
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Completați toate câmpurile!", "Eroare", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if (createAccount(username, password)) {
             JOptionPane.showMessageDialog(frame, "Cont creat cu succes!");
         } else {
@@ -145,6 +183,4 @@ public class LogInterface {
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 14));
     }
-
-
 }

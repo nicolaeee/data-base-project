@@ -22,7 +22,7 @@ public class Book {
     }
 
     // Constructor simplificat pentru utilizare în coș
-    public Book(String titlu, String autor, double pret) {
+    public Book(int id, String titlu, String autor, double pret) {
         this.titlu = titlu;
         this.autor = autor;
         this.pret = pret;

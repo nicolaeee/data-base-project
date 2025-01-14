@@ -92,6 +92,15 @@ public class ClientInterface {
         setupVerifyOrderButton(verifyOrderButton, frame);
         historyButton.addActionListener(e -> historyLogic.showHistory(frame));
 
+        BooksInterface booksInterface = new BooksInterface(cartLogic);
+        JScrollPane booksScrollPane = new JScrollPane(booksInterface);
+        booksScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        booksScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        booksScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        frame.add(booksScrollPane, BorderLayout.CENTER);
+
+
 
         // Integrarea clasei SearchBar pentru searchBar
         searchBar.addKeyListener(new KeyAdapter() {
