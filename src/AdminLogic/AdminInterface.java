@@ -356,4 +356,3 @@ public class AdminInterface extends JFrame {
     public void createUI() {
     }
 }
-
