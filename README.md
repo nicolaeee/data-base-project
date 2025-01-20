@@ -1,5 +1,7 @@
 # Library Management
 This application uses XAMPP and specific libraries for proper operation🤭
+![image](https://github.com/user-attachments/assets/921a7ce2-ff94-4307-b734-a0ef3df1c370)
+
 
 ## To run this project, you will need to add the following environment to your local machine✨
 
@@ -23,7 +25,12 @@ This application uses XAMPP and specific libraries for proper operation🤭
 `1 - Run LogInInterface`
 
 `2 - Log in as administrator: admin , parola123`
+![image](https://github.com/user-attachments/assets/3c398188-3f20-43b7-a95b-1243274eee09)
 
 `3 - Log in as client: nicu21 , nicu2003`
+![image](https://github.com/user-attachments/assets/c5bda385-3708-4f5d-ac85-3324374fcb71)
+
+
+## On the client side you can search, add to cart, place your order of your books.
 
 
